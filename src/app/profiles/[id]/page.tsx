@@ -4,13 +4,14 @@ import { getSessionUser } from "@/lib/session";
 import { PROFILE_FIELDS } from "@/lib/profile";
 import ProfileForm from "./ProfileForm";
 
-export default async function ProfileEditPage({ params }: { params: { id: string } }) {
+export default async function ProfileEditPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const user = await getSessionUser();
   if (!user) {
     redirect("/login");
   }
 
-  const profile = await prisma.profile.findUnique({ where: { id: params.id } });
+  const profile = await prisma.profile.findUnique({ where: { id } });
   if (!profile || (profile.userId !== user.id && user.role !== "SUPERADMIN")) {
     notFound();
   }

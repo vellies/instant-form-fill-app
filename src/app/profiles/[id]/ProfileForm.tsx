@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ProfileFields from "../ProfileFields";
 import { profileFormSchema, flattenFieldErrors, type ProfileFormValues } from "@/lib/profileSchema";
 
@@ -14,9 +15,10 @@ export default function ProfileForm({
   uniqueId: string | null;
   profile: ProfileFormValues;
 }) {
+  const router = useRouter();
   const [values, setValues] = useState<ProfileFormValues>(profile);
   const [errors, setErrors] = useState<Partial<Record<keyof ProfileFormValues, string>>>({});
-  const [status, setStatus] = useState<{ type: "error" | "success"; message: string } | null>(null);
+  const [status, setStatus] = useState<{ type: "error"; message: string } | null>(null);
   const [saving, setSaving] = useState(false);
 
   function handleChange(key: keyof ProfileFormValues, value: string) {
@@ -50,7 +52,8 @@ export default function ProfileForm({
         return;
       }
 
-      setStatus({ type: "success", message: "Profile saved" });
+      router.push("/profiles");
+      router.refresh();
     } catch {
       setStatus({ type: "error", message: "Could not reach the server" });
     } finally {
@@ -69,7 +72,7 @@ export default function ProfileForm({
 
       <ProfileFields values={values} errors={errors} onChange={handleChange} />
 
-      {status && <div className={`status-box status-${status.type}`}>{status.message}</div>}
+      {status && <div className="status-box status-error">{status.message}</div>}
 
       <button type="submit" disabled={saving} className="btn-primary">
         {saving ? "Saving…" : "Save profile"}

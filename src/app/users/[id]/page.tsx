@@ -3,7 +3,8 @@ import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 import EditUserForm from "./EditUserForm";
 
-export default async function EditUserPage({ params }: { params: { id: string } }) {
+export default async function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const user = await getSessionUser();
   if (!user) {
     redirect("/login");
@@ -11,12 +12,12 @@ export default async function EditUserPage({ params }: { params: { id: string } 
   if (user.role !== "SUPERADMIN") {
     redirect("/dashboard");
   }
-  if (params.id === user.id) {
+  if (id === user.id) {
     redirect("/users");
   }
 
   const target = await prisma.user.findUnique({
-    where: { id: params.id },
+    where: { id },
     select: { id: true, email: true, role: true },
   });
   if (!target) {
