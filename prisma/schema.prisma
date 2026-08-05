@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPERADMIN
+  ADMIN
+}
+
+model User {
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  email              String              @unique
+  passwordHash       String
+  role               Role                @default(ADMIN)
+  emailVerified      Boolean             @default(false)
+  apiKey             String              @unique
+  createdAt          DateTime            @default(now())
+  profiles           Profile[]
+  sessions           Session[]
+  verificationTokens VerificationToken[]
+
+  @@map("Users")
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String   @unique
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model VerificationToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String   @unique
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Profile {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String   @default("My Profile")
+  firstName      String   @default("")
+  lastName       String   @default("")
+  email          String   @default("")
+  phone          String   @default("")
+  dateOfBirth    String   @default("")
+  gender         String   @default("")
+  address        String   @default("")
+  city           String   @default("")
+  state          String   @default("")
+  zipCode        String   @default("")
+  country        String   @default("")
+  linkedinUrl    String   @default("")
+  portfolioUrl   String   @default("")
+  schoolName     String   @default("")
+  degree         String   @default("")
+  major          String   @default("")
+  graduationYear String   @default("")
+  gpa            String   @default("")
+  resumeUrl      String   @default("")
+  updatedAt      DateTime @updatedAt
+}
