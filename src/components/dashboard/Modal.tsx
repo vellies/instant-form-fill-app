@@ -4,10 +4,12 @@ export default function Modal({
   title,
   onClose,
   children,
+  wide = false,
 }: {
   title: string;
   onClose: () => void;
   children: React.ReactNode;
+  wide?: boolean;
 }) {
   return (
     <div
@@ -15,7 +17,7 @@ export default function Modal({
       onClick={onClose}
     >
       <div
-        className="card w-full max-w-md px-7 py-6"
+        className={`card w-full ${wide ? "max-w-3xl" : "max-w-md"} max-h-[85vh] overflow-y-auto px-7 py-6`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">

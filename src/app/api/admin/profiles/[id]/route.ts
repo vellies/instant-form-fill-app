@@ -1,66 +1,59 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getSessionUser, requireRole } from "@/lib/session";
-import { PROFILE_FIELDS } from "@/lib/profile";
+import { getSessionUser } from "@/lib/session";
+import { profileFormSchema, flattenFieldErrors } from "@/lib/profileSchema";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const requester = await getSessionUser(request);
-  if (!requireRole(requester, ["SUPERADMIN"])) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUser(request);
+  if (!user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const profile = await prisma.profile.findUnique({
-    where: { id: params.id },
-    include: { user: { select: { email: true } } },
-  });
-  if (!profile) {
+  const { id } = await params;
+  const profile = await prisma.profile.findUnique({ where: { id } });
+  if (!profile || profile.userId !== user.id) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
   return NextResponse.json({ profile });
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const requester = await getSessionUser(request);
-  if (!requireRole(requester, ["SUPERADMIN"])) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUser(request);
+  if (!user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const existing = await prisma.profile.findUnique({ where: { id: params.id } });
-  if (!existing) {
+  const { id } = await params;
+  const existing = await prisma.profile.findUnique({ where: { id } });
+  if (!existing || existing.userId !== user.id) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
   const body = await request.json().catch(() => null);
-  if (!body || typeof body !== "object") {
-    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+  const parsed = profileFormSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Please fix the highlighted fields", fieldErrors: flattenFieldErrors(parsed.error) },
+      { status: 400 }
+    );
   }
 
-  const data: Record<string, string> = {};
-  for (const field of PROFILE_FIELDS) {
-    if (typeof body[field] === "string") {
-      data[field] = body[field];
-    }
-  }
-
-  const profile = await prisma.profile.update({
-    where: { id: params.id },
-    data,
-    include: { user: { select: { email: true } } },
-  });
+  const profile = await prisma.profile.update({ where: { id }, data: parsed.data });
   return NextResponse.json({ profile });
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const requester = await getSessionUser(request);
-  if (!requireRole(requester, ["SUPERADMIN"])) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUser(request);
+  if (!user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const existing = await prisma.profile.findUnique({ where: { id: params.id } });
-  if (!existing) {
+  const { id } = await params;
+  const existing = await prisma.profile.findUnique({ where: { id } });
+  if (!existing || existing.userId !== user.id) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
-  await prisma.profile.delete({ where: { id: params.id } });
+  await prisma.profile.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

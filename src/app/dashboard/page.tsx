@@ -41,7 +41,7 @@ export default async function DashboardPage() {
           <h2 className="mb-1 text-base font-bold text-ink">User management</h2>
           <p className="mt-3 text-[13px] text-ink-muted">
             Create and review admin accounts from the{" "}
-            <Link href="/dashboard/users" className="font-semibold text-primary-dark no-underline">
+            <Link href="/users" className="font-semibold text-primary-dark no-underline">
               Users
             </Link>{" "}
             page.
@@ -59,13 +59,13 @@ export default async function DashboardPage() {
       </p>
 
       <section className="card px-7 py-6">
-        <h2 className="mb-1 text-base font-bold text-ink">Your profile</h2>
+        <h2 className="mb-1 text-base font-bold text-ink">Your profiles</h2>
         <p className="mt-3 text-[13px] text-ink-muted">
-          Keep your profile up to date from the{" "}
-          <Link href="/dashboard/profile" className="font-semibold text-primary-dark no-underline">
-            Profile
+          Keep your profiles up to date from the{" "}
+          <Link href="/profiles" className="font-semibold text-primary-dark no-underline">
+            Profiles
           </Link>{" "}
-          page — it&apos;s what the browser extension fills in for you.
+          page — that&apos;s what the browser extension fills forms from.
         </p>
       </section>
     </div>

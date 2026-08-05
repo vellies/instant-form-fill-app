@@ -3,26 +3,28 @@ import { prisma } from "@/lib/db";
 import { getUserFromRequest } from "@/lib/auth";
 import { PROFILE_FIELDS } from "@/lib/profile";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(request);
   if (!user) {
     return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 });
   }
 
-  const profile = await prisma.profile.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const profile = await prisma.profile.findUnique({ where: { id } });
   if (!profile || profile.userId !== user.id) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
   return NextResponse.json({ profile });
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(request);
   if (!user) {
     return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 });
   }
 
-  const existing = await prisma.profile.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const existing = await prisma.profile.findUnique({ where: { id } });
   if (!existing || existing.userId !== user.id) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
@@ -39,21 +41,22 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
   }
 
-  const profile = await prisma.profile.update({ where: { id: params.id }, data });
+  const profile = await prisma.profile.update({ where: { id }, data });
   return NextResponse.json({ profile });
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(request);
   if (!user) {
     return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 });
   }
 
-  const existing = await prisma.profile.findUnique({ where: { id: params.id } });
+  const { id } = await params;
+  const existing = await prisma.profile.findUnique({ where: { id } });
   if (!existing || existing.userId !== user.id) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
-  await prisma.profile.delete({ where: { id: params.id } });
+  await prisma.profile.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

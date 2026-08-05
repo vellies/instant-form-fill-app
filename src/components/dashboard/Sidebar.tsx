@@ -23,7 +23,7 @@ const NAV_ITEMS: {
     ),
   },
   {
-    href: "/dashboard/profile",
+    href: "/profiles",
     label: "Profile",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -33,7 +33,7 @@ const NAV_ITEMS: {
     ),
   },
   {
-    href: "/dashboard/users",
+    href: "/users",
     label: "Users",
     roles: ["SUPERADMIN"],
     icon: (
@@ -46,18 +46,7 @@ const NAV_ITEMS: {
     ),
   },
   {
-    href: "/dashboard/profiles",
-    label: "All Profiles",
-    roles: ["SUPERADMIN"],
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <rect x="3.5" y="4" width="17" height="16" rx="2.4" />
-        <path d="M7.5 9h9M7.5 13h9M7.5 17h5.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    href: "/dashboard/settings",
+    href: "/settings",
     label: "Settings",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
