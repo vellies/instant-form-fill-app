@@ -11,7 +11,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
   const { id } = await params;
   const profile = await prisma.profile.findUnique({ where: { id } });
-  if (!profile || profile.userId !== user.id) {
+  if (!profile || (profile.userId !== user.id && user.role !== "SUPERADMIN")) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
   return NextResponse.json({ profile });
@@ -25,7 +25,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
   const { id } = await params;
   const existing = await prisma.profile.findUnique({ where: { id } });
-  if (!existing || existing.userId !== user.id) {
+  if (!existing || (existing.userId !== user.id && user.role !== "SUPERADMIN")) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
@@ -50,7 +50,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
   const { id } = await params;
   const existing = await prisma.profile.findUnique({ where: { id } });
-  if (!existing || existing.userId !== user.id) {
+  if (!existing || (existing.userId !== user.id && user.role !== "SUPERADMIN")) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 

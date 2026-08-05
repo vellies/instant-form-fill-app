@@ -10,7 +10,6 @@ type Row = {
   uniqueId: string | null;
   name: string;
   email: string;
-  ownerEmail: string;
   updatedAt: string;
 };
 
@@ -33,7 +32,7 @@ function DeleteIcon() {
   );
 }
 
-export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
+export default function MyProfilesTable({ profiles }: { profiles: Row[] }) {
   const router = useRouter();
   const [deleting, setDeleting] = useState<Row | null>(null);
   const [removing, setRemoving] = useState(false);
@@ -70,7 +69,6 @@ export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
             <th className={th}>ID</th>
             <th className={th}>Name</th>
             <th className={th}>Email</th>
-            <th className={th}>Owner</th>
             <th className={th}>Updated</th>
             <th className={th}>Actions</th>
           </tr>
@@ -83,7 +81,6 @@ export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
               </td>
               <td className={td}>{p.name}</td>
               <td className={td}>{p.email || "—"}</td>
-              <td className={td}>{p.ownerEmail}</td>
               <td className={td}>{new Date(p.updatedAt).toLocaleDateString()}</td>
               <td className={td}>
                 <div className="flex items-center gap-2">
@@ -111,8 +108,8 @@ export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
           ))}
           {profiles.length === 0 && (
             <tr>
-              <td className={td} colSpan={6}>
-                No profiles match your search.
+              <td className={td} colSpan={5}>
+                No profiles yet. Create one to get started.
               </td>
             </tr>
           )}
@@ -122,8 +119,7 @@ export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
       {deleting && (
         <Modal title="Delete profile" onClose={() => setDeleting(null)}>
           <p className="mb-4 text-sm text-ink-soft">
-            Delete <strong className="text-ink">{deleting.name}</strong> (owned by{" "}
-            <strong className="text-ink">{deleting.ownerEmail}</strong>)? This can&apos;t be undone.
+            Delete <strong className="text-ink">{deleting.name}</strong>? This can&apos;t be undone.
           </p>
           {deleteError && <div className="status-box status-error mb-3">{deleteError}</div>}
           <div className="flex justify-end gap-2.5">

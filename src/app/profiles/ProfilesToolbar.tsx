@@ -1,87 +1,48 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Modal from "@/components/dashboard/Modal";
-import ProfileFields from "./ProfileFields";
-import { profileFormSchema, flattenFieldErrors, EMPTY_PROFILE_VALUES, type ProfileFormValues } from "@/lib/profileSchema";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 export default function ProfilesToolbar() {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const [values, setValues] = useState<ProfileFormValues>(EMPTY_PROFILE_VALUES);
-  const [errors, setErrors] = useState<Partial<Record<keyof ProfileFormValues, string>>>({});
-  const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  function openModal() {
-    setValues(EMPTY_PROFILE_VALUES);
-    setErrors({});
-    setError("");
-    setOpen(true);
+  function handleQueryChange(value: string) {
+    setQuery(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) params.set("q", value);
+      else params.delete("q");
+      params.delete("page");
+      router.push(`${pathname}?${params.toString()}`);
+    }, 300);
   }
 
-  function handleChange(key: keyof ProfileFormValues, value: string) {
-    setValues((prev) => ({ ...prev, [key]: value }));
-  }
-
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    setError("");
-
-    const parsed = profileFormSchema.safeParse(values);
-    if (!parsed.success) {
-      setErrors(flattenFieldErrors(parsed.error));
-      return;
-    }
-    setErrors({});
-    setSaving(true);
-
-    try {
-      const response = await fetch("/api/admin/profiles", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.fieldErrors) setErrors(data.fieldErrors);
-        setError(data.error ?? "Could not create profile");
-        return;
-      }
-
-      setOpen(false);
-      router.refresh();
-    } catch {
-      setError("Could not reach the server");
-    } finally {
-      setSaving(false);
-    }
-  }
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   return (
-    <>
-      <button type="button" className="btn-primary whitespace-nowrap" onClick={openModal}>
-        + New Profile
-      </button>
-
-      {open && (
-        <Modal title="New profile" onClose={() => setOpen(false)} wide>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <ProfileFields values={values} errors={errors} onChange={handleChange} bare />
-            {error && <div className="status-box status-error">{error}</div>}
-            <div className="flex justify-end gap-2.5">
-              <button type="button" className="btn-secondary" onClick={() => setOpen(false)}>
-                Cancel
-              </button>
-              <button type="submit" disabled={saving} className="btn-primary">
-                {saving ? "Creating…" : "Create profile"}
-              </button>
-            </div>
-          </form>
-        </Modal>
-      )}
-    </>
+    <div className="card flex flex-wrap items-center gap-3 px-5 py-4">
+      <div className="field mb-0 min-w-[220px] flex-1">
+        <input
+          type="text"
+          placeholder="Search profiles by name, email, ID, or owner..."
+          value={query}
+          onChange={(e) => handleQueryChange(e.target.value)}
+          aria-label="Search profiles"
+        />
+      </div>
+      <Link href="/profiles/new" className="btn-primary whitespace-nowrap no-underline">
+        + Add Profile
+      </Link>
+    </div>
   );
 }

@@ -24,11 +24,13 @@ const NAV_ITEMS: {
   },
   {
     href: "/profiles",
-    label: "Profile",
+    label: "Profiles",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 20c1.6-3.6 5-5.5 8-5.5s6.4 1.9 8 5.5" strokeLinecap="round" />
+        <circle cx="9" cy="8" r="3.2" />
+        <path d="M2.5 19.5c1.2-3.2 3.8-5 6.5-5s5.3 1.8 6.5 5" strokeLinecap="round" />
+        <path d="M15.5 4.2c1.6.5 2.7 2 2.7 3.8s-1.1 3.3-2.7 3.8" strokeLinecap="round" />
+        <path d="M17 14.7c2.1.5 3.7 2.1 4.5 4.8" strokeLinecap="round" />
       </svg>
     ),
   },

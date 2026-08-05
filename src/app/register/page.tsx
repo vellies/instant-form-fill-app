@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -56,9 +57,8 @@ export default function RegisterPage() {
             </div>
             <div className="field">
               <label htmlFor="password">Password</label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

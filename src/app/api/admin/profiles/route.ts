@@ -4,19 +4,6 @@ import { getSessionUser } from "@/lib/session";
 import { profileFormSchema, flattenFieldErrors } from "@/lib/profileSchema";
 import { generateUniqueProfileId } from "@/lib/profileId";
 
-export async function GET(request: Request) {
-  const user = await getSessionUser(request);
-  if (!user) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const profiles = await prisma.profile.findMany({
-    where: { userId: user.id },
-    orderBy: { updatedAt: "desc" },
-  });
-  return NextResponse.json({ profiles });
-}
-
 export async function POST(request: Request) {
   const user = await getSessionUser(request);
   if (!user) {

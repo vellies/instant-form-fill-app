@@ -11,7 +11,7 @@ export default async function ProfileEditPage({ params }: { params: { id: string
   }
 
   const profile = await prisma.profile.findUnique({ where: { id: params.id } });
-  if (!profile || profile.userId !== user.id) {
+  if (!profile || (profile.userId !== user.id && user.role !== "SUPERADMIN")) {
     notFound();
   }
 

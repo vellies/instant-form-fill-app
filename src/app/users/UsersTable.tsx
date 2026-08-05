@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Modal from "@/components/dashboard/Modal";
 
 type Row = {
@@ -33,48 +34,9 @@ function DeleteIcon() {
 
 export default function UsersTable({ users, currentUserId }: { users: Row[]; currentUserId: string }) {
   const router = useRouter();
-  const [editing, setEditing] = useState<Row | null>(null);
-  const [role, setRole] = useState<"ADMIN" | "SUPERADMIN">("ADMIN");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-
   const [deleting, setDeleting] = useState<Row | null>(null);
   const [removing, setRemoving] = useState(false);
   const [deleteError, setDeleteError] = useState("");
-
-  function openEdit(user: Row) {
-    setEditing(user);
-    setRole(user.role);
-    setError("");
-  }
-
-  async function handleSaveRole(event: React.FormEvent) {
-    event.preventDefault();
-    if (!editing) return;
-    setSaving(true);
-    setError("");
-
-    try {
-      const response = await fetch(`/api/admin/admins/${editing.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error ?? "Could not update role");
-        return;
-      }
-
-      setEditing(null);
-      router.refresh();
-    } catch {
-      setError("Could not reach the server");
-    } finally {
-      setSaving(false);
-    }
-  }
 
   async function handleDelete() {
     if (!deleting) return;
@@ -134,15 +96,22 @@ export default function UsersTable({ users, currentUserId }: { users: Row[]; cur
                 <td className={td}>{new Date(u.createdAt).toLocaleDateString()}</td>
                 <td className={td}>
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      disabled={isSelf}
-                      onClick={() => openEdit(u)}
-                      title={isSelf ? "You cannot edit your own role" : "Edit role"}
-                      className="flex h-7 w-7 items-center justify-center rounded-full text-ink-soft hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-30"
-                    >
-                      <EditIcon />
-                    </button>
+                    {isSelf ? (
+                      <span
+                        title="You cannot edit your own role"
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-ink-soft opacity-30"
+                      >
+                        <EditIcon />
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/users/${u.id}`}
+                        title="Edit role"
+                        className="flex h-7 w-7 items-center justify-center rounded-full text-ink-soft no-underline hover:bg-surface-muted"
+                      >
+                        <EditIcon />
+                      </Link>
+                    )}
                     <button
                       type="button"
                       disabled={isSelf}
@@ -169,28 +138,6 @@ export default function UsersTable({ users, currentUserId }: { users: Row[]; cur
           )}
         </tbody>
       </table>
-
-      {editing && (
-        <Modal title={`Edit role — ${editing.email}`} onClose={() => setEditing(null)}>
-          <form onSubmit={handleSaveRole} className="flex flex-col gap-3.5">
-            <div className="field mb-0">
-              <label htmlFor="edit-role">Role</label>
-              <select
-                id="edit-role"
-                value={role}
-                onChange={(e) => setRole(e.target.value as "ADMIN" | "SUPERADMIN")}
-              >
-                <option value="ADMIN">Admin</option>
-                <option value="SUPERADMIN">Superadmin</option>
-              </select>
-            </div>
-            {error && <div className="status-box status-error">{error}</div>}
-            <button type="submit" disabled={saving} className="btn-primary">
-              {saving ? "Saving…" : "Save role"}
-            </button>
-          </form>
-        </Modal>
-      )}
 
       {deleting && (
         <Modal title="Delete user" onClose={() => setDeleting(null)}>

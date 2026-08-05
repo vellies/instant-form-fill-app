@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function ChangePasswordForm() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -50,9 +51,8 @@ export default function ChangePasswordForm() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-x-5 gap-y-3.5">
           <div className="field mb-0">
             <label htmlFor="current-password">Current password</label>
-            <input
+            <PasswordInput
               id="current-password"
-              type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
@@ -60,9 +60,8 @@ export default function ChangePasswordForm() {
           </div>
           <div className="field mb-0">
             <label htmlFor="new-password-settings">New password</label>
-            <input
+            <PasswordInput
               id="new-password-settings"
-              type="password"
               minLength={8}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -71,9 +70,8 @@ export default function ChangePasswordForm() {
           </div>
           <div className="field mb-0">
             <label htmlFor="confirm-password">Confirm new password</label>
-            <input
+            <PasswordInput
               id="confirm-password"
-              type="password"
               minLength={8}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
