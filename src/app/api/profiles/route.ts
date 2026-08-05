@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getUserFromRequest } from "@/lib/auth";
+import { generateUniqueProfileId } from "@/lib/profileId";
 
 export async function GET(request: Request) {
   const user = await getUserFromRequest(request);
@@ -24,8 +25,9 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const name = typeof body?.name === "string" && body.name.trim() ? body.name.trim() : "New Profile";
 
+  const uniqueId = await generateUniqueProfileId();
   const profile = await prisma.profile.create({
-    data: { userId: user.id, name },
+    data: { userId: user.id, name, uniqueId },
   });
   return NextResponse.json({ profile });
 }

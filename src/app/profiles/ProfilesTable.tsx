@@ -7,6 +7,7 @@ import Modal from "@/components/dashboard/Modal";
 
 type Row = {
   id: string;
+  uniqueId: string | null;
   name: string;
   email: string;
   updatedAt: string;
@@ -65,6 +66,7 @@ export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
       <table className="w-full border-collapse text-[13.5px]">
         <thead>
           <tr>
+            <th className={th}>ID</th>
             <th className={th}>Name</th>
             <th className={th}>Email</th>
             <th className={th}>Updated</th>
@@ -74,6 +76,9 @@ export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
         <tbody>
           {profiles.map((p) => (
             <tr key={p.id}>
+              <td className={td}>
+                <span className="badge">{p.uniqueId ?? "—"}</span>
+              </td>
               <td className={td}>{p.name}</td>
               <td className={td}>{p.email || "—"}</td>
               <td className={td}>{new Date(p.updatedAt).toLocaleDateString()}</td>
@@ -103,7 +108,7 @@ export default function ProfilesTable({ profiles }: { profiles: Row[] }) {
           ))}
           {profiles.length === 0 && (
             <tr>
-              <td className={td} colSpan={4}>
+              <td className={td} colSpan={5}>
                 No profiles yet. Create one to get started.
               </td>
             </tr>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 import { profileFormSchema, flattenFieldErrors } from "@/lib/profileSchema";
+import { generateUniqueProfileId } from "@/lib/profileId";
 
 export async function GET(request: Request) {
   const user = await getSessionUser(request);
@@ -31,8 +32,9 @@ export async function POST(request: Request) {
     );
   }
 
+  const uniqueId = await generateUniqueProfileId();
   const profile = await prisma.profile.create({
-    data: { userId: user.id, ...parsed.data },
+    data: { userId: user.id, uniqueId, ...parsed.data },
   });
   return NextResponse.json({ profile });
 }

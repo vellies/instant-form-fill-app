@@ -5,7 +5,15 @@ import Link from "next/link";
 import ProfileFields from "../ProfileFields";
 import { profileFormSchema, flattenFieldErrors, type ProfileFormValues } from "@/lib/profileSchema";
 
-export default function ProfileForm({ id, profile }: { id: string; profile: ProfileFormValues }) {
+export default function ProfileForm({
+  id,
+  uniqueId,
+  profile,
+}: {
+  id: string;
+  uniqueId: string | null;
+  profile: ProfileFormValues;
+}) {
   const [values, setValues] = useState<ProfileFormValues>(profile);
   const [errors, setErrors] = useState<Partial<Record<keyof ProfileFormValues, string>>>({});
   const [status, setStatus] = useState<{ type: "error" | "success"; message: string } | null>(null);
@@ -52,10 +60,11 @@ export default function ProfileForm({ id, profile }: { id: string; profile: Prof
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Link href="/profiles" className="btn-secondary no-underline">
           ← Back to profiles
         </Link>
+        {uniqueId && <span className="badge">{uniqueId}</span>}
       </div>
 
       <ProfileFields values={values} errors={errors} onChange={handleChange} />

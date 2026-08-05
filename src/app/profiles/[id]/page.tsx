@@ -19,6 +19,7 @@ export default async function ProfileEditPage({ params }: { params: { id: string
     <div className="flex flex-col gap-5">
       <ProfileForm
         id={profile.id}
+        uniqueId={profile.uniqueId}
         profile={Object.fromEntries(PROFILE_FIELDS.map((field) => [field, profile[field]])) as Record<
           (typeof PROFILE_FIELDS)[number],
           string

@@ -31,6 +31,7 @@ export default async function ProfilesPage() {
         <ProfilesTable
           profiles={profiles.map((p) => ({
             id: p.id,
+            uniqueId: p.uniqueId,
             name: p.name,
             email: p.email,
             updatedAt: p.updatedAt.toISOString(),
