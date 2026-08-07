@@ -32,7 +32,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid or missing API key" }, { status: 401 });
   }
 
-  const withinLimit = await checkAndConsume(user.id);
+  let withinLimit: boolean;
+  try {
+    withinLimit = await checkAndConsume(user.id);
+  } catch (error) {
+    console.error("AI rate limit check failed:", error);
+    return NextResponse.json({ error: "Could not process request" }, { status: 500 });
+  }
   if (!withinLimit) {
     return NextResponse.json({ error: "Too many AI fill requests, please slow down" }, { status: 429 });
   }
