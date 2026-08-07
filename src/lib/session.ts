@@ -27,18 +27,19 @@ export async function destroySession(token: string): Promise<void> {
   await prisma.session.deleteMany({ where: { token } });
 }
 
-async function getSessionToken(request?: Request): Promise<string | null> {
-  if (request) {
-    const header = request.headers.get("cookie") ?? "";
-    const match = header.match(new RegExp(`${SESSION_COOKIE}=([^;]+)`));
-    return match ? decodeURIComponent(match[1]) : null;
-  }
+// `cookies()` from next/headers works identically in Route Handlers and
+// Server Components — both read from the same underlying incoming request.
+// This used to branch on an optional `request` param and hand-parse the raw
+// Cookie header for Route Handler callers, which was both unnecessary and a
+// source of bugs (an unanchored-regex mis-parse was one; there may be
+// others). Using the same mechanism everywhere removes the whole class.
+async function getSessionToken(): Promise<string | null> {
   const store = await cookies();
   return store.get(SESSION_COOKIE)?.value ?? null;
 }
 
-export async function getSessionUser(request?: Request): Promise<User | null> {
-  const token = await getSessionToken(request);
+export async function getSessionUser(): Promise<User | null> {
+  const token = await getSessionToken();
   if (!token) return null;
 
   const session = await prisma.session.findUnique({ where: { token }, include: { user: true } });

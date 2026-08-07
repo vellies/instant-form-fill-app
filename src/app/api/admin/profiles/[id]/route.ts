@@ -4,7 +4,7 @@ import { getSessionUser } from "@/lib/session";
 import { profileFormSchema, flattenFieldErrors } from "@/lib/profileSchema";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser(request);
+  const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
@@ -18,7 +18,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser(request);
+  const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
@@ -43,7 +43,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser(request);
+  const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }

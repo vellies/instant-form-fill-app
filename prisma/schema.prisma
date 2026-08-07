@@ -46,6 +46,15 @@ model VerificationToken {
   createdAt DateTime @default(now())
 }
 
+model AiRateLimit {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   @db.ObjectId
+  windowStart DateTime
+  count       Int      @default(0)
+
+  @@unique([userId, windowStart])
+}
+
 model Profile {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   userId         String   @db.ObjectId

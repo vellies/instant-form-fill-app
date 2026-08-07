@@ -3,7 +3,7 @@ import { prisma } from "@/lib/db";
 import { getSessionUser, requireRole } from "@/lib/session";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const requester = await getSessionUser(request);
+  const requester = await getSessionUser();
   if (!requireRole(requester, ["SUPERADMIN"])) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -29,7 +29,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const requester = await getSessionUser(request);
+  const requester = await getSessionUser();
   if (!requireRole(requester, ["SUPERADMIN"])) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

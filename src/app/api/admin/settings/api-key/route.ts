@@ -4,7 +4,7 @@ import { getSessionUser } from "@/lib/session";
 import { generateApiKey } from "@/lib/auth";
 
 export async function POST(request: Request) {
-  const user = await getSessionUser(request);
+  const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }

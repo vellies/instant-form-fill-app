@@ -5,7 +5,7 @@ import { profileFormSchema, flattenFieldErrors } from "@/lib/profileSchema";
 import { generateUniqueProfileId } from "@/lib/profileId";
 
 export async function POST(request: Request) {
-  const user = await getSessionUser(request);
+  const user = await getSessionUser();
   if (!user) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }

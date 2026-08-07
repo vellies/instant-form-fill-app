@@ -4,7 +4,7 @@ import { getSessionUser, hashPassword, requireRole } from "@/lib/session";
 import { generateApiKey } from "@/lib/auth";
 
 export async function GET(request: Request) {
-  const requester = await getSessionUser(request);
+  const requester = await getSessionUser();
   if (!requireRole(requester, ["SUPERADMIN"])) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const requester = await getSessionUser(request);
+  const requester = await getSessionUser();
   if (!requireRole(requester, ["SUPERADMIN"])) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
