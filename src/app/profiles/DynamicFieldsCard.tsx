@@ -11,11 +11,18 @@ import {
   type FieldType,
 } from "@/lib/profileSchema";
 
+// Deliberately no width utility here — every call site in this file pairs
+// this with its own explicit w-[Npx] override, and Tailwind's generated
+// stylesheet happens to emit `.w-full` after arbitrary-value width
+// utilities, so a bundled `w-full` would win the cascade regardless of
+// where it sits in the className string (HTML class-attribute order does
+// not affect CSS cascade order — only the compiled stylesheet's rule order
+// does for equal-specificity selectors).
 const rowControl =
-  "w-full rounded-[12px] border border-border bg-surface-muted px-2.5 py-2 font-sans text-[13px] text-ink outline-none transition-colors duration-150 ease-in-out focus:border-primary focus:bg-surface";
+  "rounded-[12px] border border-border bg-surface-muted px-2.5 py-2 font-sans text-[13px] text-ink outline-none transition-colors duration-150 ease-in-out focus:border-primary focus:bg-surface";
 
 const rowControlDanger =
-  "w-full rounded-[12px] border border-danger bg-surface-muted px-2.5 py-2 font-sans text-[13px] text-ink outline-none transition-colors duration-150 ease-in-out focus:border-danger focus:bg-surface";
+  "rounded-[12px] border border-danger bg-surface-muted px-2.5 py-2 font-sans text-[13px] text-ink outline-none transition-colors duration-150 ease-in-out focus:border-danger focus:bg-surface";
 
 const iconBtn = "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-ink-soft hover:bg-surface-muted disabled:opacity-30 disabled:hover:bg-transparent";
 

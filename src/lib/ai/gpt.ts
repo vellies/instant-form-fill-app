@@ -1,10 +1,16 @@
 import OpenAI from "openai";
-import { PDFParse } from "pdf-parse";
 import type { AiProvider, FieldMatch, OtherExtraction } from "./types";
 import { MATCHES_JSON_SCHEMA, OTHER_JSON_SCHEMA } from "./schema";
 import { SYSTEM_PROMPT, buildUserPrompt, OTHER_SYSTEM_PROMPT, buildOtherExtractionPrompt } from "./prompt";
 
+// Imported lazily, inside the one function that needs it, rather than at
+// module scope: pdf-parse pulls in pdfjs-dist, which references the
+// browser-only `DOMMatrix` global at module-evaluation time. A static
+// import here would crash every caller of this module (including the
+// `gpt` field-matching export below, which never touches PDFs) the moment
+// it's loaded in a Node.js runtime that doesn't define DOMMatrix.
 async function pdfToText(pdfBase64: string): Promise<string> {
+  const { PDFParse } = await import("pdf-parse");
   const buffer = Buffer.from(pdfBase64, "base64");
   const parser = new PDFParse({ data: buffer });
   try {
