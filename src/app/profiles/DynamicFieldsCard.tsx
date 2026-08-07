@@ -240,7 +240,7 @@ export default function DynamicFieldsCard({
       {fields.length === 0 && <p className="mb-3.5 text-[13px] text-ink-muted">No fields yet.</p>}
 
       <div className="overflow-x-auto">
-        <div className="flex w-[100%] flex-col gap-2">
+        <div className="flex min-w-fit flex-col gap-2">
           {fields.map((field, index) => {
             const labelInvalid = showDuplicateErrors && (duplicateIndexes.has(index) || !field.label.trim());
             const valueInvalid = showDuplicateErrors && !field.value.trim();
@@ -288,7 +288,7 @@ export default function DynamicFieldsCard({
                     aria-label="Field type"
                     value={field.type}
                     onChange={(e) => updateField(index, "type", e.target.value)}
-                    className={`${rowControl} w-[160px] shrink-0`}
+                    className={`${rowControl} w-[95px] shrink-0`}
                   >
                     {FIELD_TYPES.map((t) => (
                       <option key={t} value={t}>
@@ -302,7 +302,7 @@ export default function DynamicFieldsCard({
                     value={field.label}
                     placeholder="Label"
                     onChange={(e) => updateField(index, "label", e.target.value)}
-                    className={`${labelInvalid ? rowControlDanger : rowControl} w-[180px] shrink-0`}
+                    className={`${labelInvalid ? rowControlDanger : rowControl} w-[160px] shrink-0`}
                   />
 
                   {field.type === "textarea" ? (
@@ -311,7 +311,7 @@ export default function DynamicFieldsCard({
                       value={field.value}
                       rows={1}
                       onChange={(e) => updateField(index, "value", e.target.value)}
-                      className={`${valueInvalid ? rowControlDanger : rowControl} w-[340px] shrink-0 resize-y`}
+                      className={`${valueInvalid ? rowControlDanger : rowControl} w-[260px] shrink-0 resize-y`}
                     />
                   ) : field.type === "file" ? (
                     <input
@@ -319,7 +319,7 @@ export default function DynamicFieldsCard({
                       type="file"
                       title={field.value || undefined}
                       onChange={(e) => updateField(index, "value", e.target.files?.[0]?.name ?? "")}
-                      className={`${valueInvalid ? rowControlDanger : rowControl} w-[340px] shrink-0`}
+                      className={`${valueInvalid ? rowControlDanger : rowControl} w-[260px] shrink-0`}
                     />
                   ) : (
                     <input
@@ -328,7 +328,7 @@ export default function DynamicFieldsCard({
                       value={field.value}
                       placeholder="Value"
                       onChange={(e) => updateField(index, "value", e.target.value)}
-                      className={`${valueInvalid ? rowControlDanger : rowControl} w-[340px] shrink-0`}
+                      className={`${valueInvalid ? rowControlDanger : rowControl} w-[260px] shrink-0`}
                     />
                   )}
 
