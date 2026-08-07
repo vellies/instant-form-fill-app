@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
-import { profileFormSchema, flattenFieldErrors } from "@/lib/profileSchema";
+import { profileFormSchema, flattenFieldErrors, dynamicFieldsSchema } from "@/lib/profileSchema";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
@@ -38,7 +38,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     );
   }
 
-  const profile = await prisma.profile.update({ where: { id }, data: parsed.data });
+  const fields = dynamicFieldsSchema.safeParse((body as { fields?: unknown })?.fields ?? []);
+  if (!fields.success) {
+    return NextResponse.json({ error: "Please fix the fields" }, { status: 400 });
+  }
+
+  const profile = await prisma.profile.update({
+    where: { id },
+    data: { ...parsed.data, fields: fields.data },
+  });
   return NextResponse.json({ profile });
 }
 

@@ -23,3 +23,27 @@ export const MATCHES_JSON_SCHEMA = {
   required: ["matches"],
   additionalProperties: false,
 } as const;
+
+// Standard JSON Schema for the {entries:[{label,value}]} shape returned by
+// generic document extraction (the "Others" card) — mirrors RESUME_JSON_SCHEMA's
+// role, see the note on it above; gemini.ts defines an equivalent using its
+// SDK's own Type-enum representation.
+export const OTHER_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    entries: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          label: { type: "string", description: "Short, human-readable label drawn from the document itself, e.g. \"PAN Number\", \"10th Percentage\", \"Certificate ID\"." },
+          value: { type: "string", description: "The value for this label, exactly as stated in the document." },
+        },
+        required: ["label", "value"],
+        additionalProperties: false,
+      },
+    },
+  },
+  required: ["entries"],
+  additionalProperties: false,
+} as const;

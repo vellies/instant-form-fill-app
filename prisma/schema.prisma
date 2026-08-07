@@ -56,29 +56,17 @@ model AiRateLimit {
 }
 
 model Profile {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String   @db.ObjectId
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  uniqueId       String?  @unique
-  name           String   @default("My Profile")
-  firstName      String   @default("")
-  lastName       String   @default("")
-  email          String   @default("")
-  phone          String   @default("")
-  dateOfBirth    String   @default("")
-  gender         String   @default("")
-  address        String   @default("")
-  city           String   @default("")
-  state          String   @default("")
-  zipCode        String   @default("")
-  country        String   @default("")
-  linkedinUrl    String   @default("")
-  portfolioUrl   String   @default("")
-  schoolName     String   @default("")
-  degree         String   @default("")
-  major          String   @default("")
-  graduationYear String   @default("")
-  gpa            String   @default("")
-  resumeUrl      String   @default("")
-  updatedAt      DateTime @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  uniqueId  String?  @unique
+  name      String   @default("My Profile")
+  email     String   @default("")
+  phone     String   @default("")
+  // Every other piece of profile data (address, links, IDs, etc.) is a
+  // dynamic {type, label, value} entry — nullable rather than
+  // required-with-default so existing documents without it read as `[]` in
+  // application code with no backfill needed.
+  fields    Json?
+  updatedAt DateTime @updatedAt
 }

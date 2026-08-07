@@ -10,6 +10,7 @@ type Row = {
   uniqueId: string | null;
   name: string;
   email: string;
+  phone: string;
   updatedAt: string;
 };
 
@@ -69,6 +70,7 @@ export default function MyProfilesTable({ profiles }: { profiles: Row[] }) {
             <th className={th}>ID</th>
             <th className={th}>Name</th>
             <th className={th}>Email</th>
+            <th className={th}>Phone</th>
             <th className={th}>Updated</th>
             <th className={th}>Actions</th>
           </tr>
@@ -81,6 +83,7 @@ export default function MyProfilesTable({ profiles }: { profiles: Row[] }) {
               </td>
               <td className={td}>{p.name}</td>
               <td className={td}>{p.email || "—"}</td>
+              <td className={td}>{p.phone || "—"}</td>
               <td className={td}>{new Date(p.updatedAt).toLocaleDateString()}</td>
               <td className={td}>
                 <div className="flex items-center gap-2">
@@ -108,7 +111,7 @@ export default function MyProfilesTable({ profiles }: { profiles: Row[] }) {
           ))}
           {profiles.length === 0 && (
             <tr>
-              <td className={td} colSpan={5}>
+              <td className={td} colSpan={6}>
                 No profiles yet. Create one to get started.
               </td>
             </tr>

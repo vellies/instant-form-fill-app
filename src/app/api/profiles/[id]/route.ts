@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { getUserFromRequest } from "@/lib/auth";
-import { PROFILE_FIELDS } from "@/lib/profile";
+import { dynamicFieldsSchema } from "@/lib/profileSchema";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const user = await getUserFromRequest(request);
@@ -34,11 +35,22 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const data: Record<string, string> = {};
-  for (const field of PROFILE_FIELDS) {
-    if (typeof body[field] === "string") {
-      data[field] = body[field];
+  const data: { name?: string; email?: string; phone?: string; fields?: Prisma.InputJsonValue } = {};
+  if (typeof (body as { name?: unknown }).name === "string") {
+    data.name = (body as { name: string }).name;
+  }
+  if (typeof (body as { email?: unknown }).email === "string") {
+    data.email = (body as { email: string }).email;
+  }
+  if (typeof (body as { phone?: unknown }).phone === "string") {
+    data.phone = (body as { phone: string }).phone;
+  }
+  if ((body as { fields?: unknown }).fields !== undefined) {
+    const fields = dynamicFieldsSchema.safeParse((body as { fields?: unknown }).fields);
+    if (!fields.success) {
+      return NextResponse.json({ error: "Invalid fields" }, { status: 400 });
     }
+    data.fields = fields.data;
   }
 
   const profile = await prisma.profile.update({ where: { id }, data });

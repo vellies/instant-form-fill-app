@@ -27,3 +27,18 @@ export interface AiMatchResult {
 export type AiProviderId = "claude" | "gemini" | "gpt";
 
 export type AiProvider = (profile: Record<string, string>, fields: FieldDescriptor[]) => Promise<AiMatchResult>;
+
+export interface OtherEntry {
+  label: string;
+  value: string;
+}
+
+export interface OtherExtraction {
+  entries: OtherEntry[];
+}
+
+// Deliberately no shared "OtherExtractor" function-type here, unlike
+// AiProvider above: Claude/Gemini take the raw PDF (both read documents
+// natively) while GPT takes pre-extracted text (Chat Completions has no
+// native PDF input), so each provider's extractOther has a genuinely
+// different signature — forcing a common interface would just hide that.

@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
-import { PROFILE_FIELDS } from "@/lib/profile";
+import type { DynamicFieldValues } from "@/lib/profileSchema";
 import ProfileForm from "./ProfileForm";
 
 export default async function ProfileEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -21,10 +21,8 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ id
       <ProfileForm
         id={profile.id}
         uniqueId={profile.uniqueId}
-        profile={Object.fromEntries(PROFILE_FIELDS.map((field) => [field, profile[field]])) as Record<
-          (typeof PROFILE_FIELDS)[number],
-          string
-        >}
+        profile={{ name: profile.name, email: profile.email, phone: profile.phone }}
+        fields={(profile.fields as DynamicFieldValues[] | null) ?? []}
       />
     </div>
   );

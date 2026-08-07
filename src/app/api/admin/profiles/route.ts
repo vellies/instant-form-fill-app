@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
-import { profileFormSchema, flattenFieldErrors } from "@/lib/profileSchema";
+import { profileFormSchema, flattenFieldErrors, dynamicFieldsSchema } from "@/lib/profileSchema";
 import { generateUniqueProfileId } from "@/lib/profileId";
 
 export async function POST(request: Request) {
@@ -19,9 +19,14 @@ export async function POST(request: Request) {
     );
   }
 
+  const fields = dynamicFieldsSchema.safeParse((body as { fields?: unknown })?.fields ?? []);
+  if (!fields.success) {
+    return NextResponse.json({ error: "Please fix the fields" }, { status: 400 });
+  }
+
   const uniqueId = await generateUniqueProfileId();
   const profile = await prisma.profile.create({
-    data: { userId: user.id, uniqueId, ...parsed.data },
+    data: { userId: user.id, uniqueId, ...parsed.data, fields: fields.data },
   });
   return NextResponse.json({ profile });
 }

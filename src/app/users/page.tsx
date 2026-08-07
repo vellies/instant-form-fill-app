@@ -10,7 +10,7 @@ const PAGE_SIZE = 10;
 export default async function UsersPage({
   searchParams,
 }: {
-  searchParams: { q?: string; page?: string };
+  searchParams: Promise<{ q?: string; page?: string }>;
 }) {
   const user = await getSessionUser();
   if (!user) {
@@ -20,8 +20,9 @@ export default async function UsersPage({
     redirect("/dashboard");
   }
 
-  const query = searchParams.q?.trim() ?? "";
-  const page = Math.max(1, Number(searchParams.page) || 1);
+  const { q, page: pageParam } = await searchParams;
+  const query = q?.trim() ?? "";
+  const page = Math.max(1, Number(pageParam) || 1);
 
   const where = query ? { email: { contains: query, mode: "insensitive" as const } } : {};
 

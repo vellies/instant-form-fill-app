@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function ProfilesToolbar() {
+export default function ProfilesToolbar({
+  placeholder = "Search profiles by name, email, phone, ID, or owner...",
+}: {
+  placeholder?: string;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -34,7 +38,7 @@ export default function ProfilesToolbar() {
       <div className="field mb-0 min-w-[220px] flex-1">
         <input
           type="text"
-          placeholder="Search profiles by name, email, ID, or owner..."
+          placeholder={placeholder}
           value={query}
           onChange={(e) => handleQueryChange(e.target.value)}
           aria-label="Search profiles"

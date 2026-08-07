@@ -21,3 +21,19 @@ export const SYSTEM_PROMPT =
 export function buildUserPrompt(profile: Record<string, string>, fields: FieldDescriptor[]): string {
   return JSON.stringify({ profile, fields });
 }
+
+export const OTHER_SYSTEM_PROMPT =
+  "You extract miscellaneous label/value information from an uploaded document (certificate, " +
+  "ID card, marksheet, or similar) that a user wants to add as freeform extra fields on their " +
+  "profile. Extract every distinct piece of identifying or qualification information you find " +
+  "— e.g. ID/certificate numbers, issuing authority, dates, qualification percentages, skills " +
+  "— as short label/value pairs. Use concise, human-readable labels drawn from the document " +
+  "itself rather than a fixed vocabulary. " +
+  "Rules: " +
+  "1) Never invent a label or value that is not evidenced in the document. " +
+  "2) Omit anything unclear or not explicitly stated rather than guessing. " +
+  "3) Respond with the structured result only, no explanation.";
+
+export function buildOtherExtractionPrompt(): string {
+  return "Extract every label/value pair you can find in this document.";
+}

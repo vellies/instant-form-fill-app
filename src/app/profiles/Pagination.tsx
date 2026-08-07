@@ -21,11 +21,13 @@ export default function Pagination({
   totalPages,
   total,
   pageSize,
+  pageSizeOptions,
 }: {
   page: number;
   totalPages: number;
   total: number;
   pageSize: number;
+  pageSizeOptions?: readonly number[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -38,14 +40,40 @@ export default function Pagination({
     router.push(`${pathname}?${params.toString()}`);
   }
 
+  function changePageSize(size: number) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("pageSize", String(size));
+    params.delete("page");
+    router.push(`${pathname}?${params.toString()}`);
+  }
+
   const start = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const end = Math.min(page * pageSize, total);
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 text-[13px] text-ink-muted">
-      <span>
-        Showing {start} - {end} of {total}
-      </span>
+      <div className="flex flex-wrap items-center gap-3">
+        <span>
+          Showing {start} - {end} of {total}
+        </span>
+        {pageSizeOptions && pageSizeOptions.length > 0 && (
+          <label className="flex items-center gap-1.5">
+            Per page
+            <select
+              aria-label="Profiles per page"
+              value={pageSize}
+              onChange={(e) => changePageSize(Number(e.target.value))}
+              className="rounded-[10px] border border-border bg-surface-muted px-2 py-1 text-[13px] text-ink outline-none focus:border-primary"
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
       <div className="flex items-center gap-1">
         <button
           type="button"
