@@ -17,6 +17,15 @@ type Row = {
 const th = "px-2.5 py-2 border-b border-border text-left text-xs font-semibold uppercase tracking-[0.03em] text-ink-muted";
 const td = "border-b border-border px-2.5 py-2.5 text-ink";
 
+function ViewIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4">
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
 function EditIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4">
@@ -87,6 +96,13 @@ export default function MyProfilesTable({ profiles }: { profiles: Row[] }) {
               <td className={td}>{new Date(p.updatedAt).toLocaleDateString()}</td>
               <td className={td}>
                 <div className="flex items-center gap-2">
+                  <Link
+                    href={`/profiles/${p.id}/view`}
+                    title="View profile"
+                    className="flex h-7 w-7 items-center justify-center rounded-full text-ink-soft no-underline hover:bg-surface-muted"
+                  >
+                    <ViewIcon />
+                  </Link>
                   <Link
                     href={`/profiles/${p.id}`}
                     title="Edit profile"
